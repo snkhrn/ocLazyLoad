@@ -65,6 +65,7 @@ var App = angular.module('app', ['ui.router', 'oc.lazyLoad'])
 			modules: [{
 				name: 'oc.modal',
 				files: [
+					'js/testCtrl.js',
 					'bower_components/bootstrap/dist/css/bootstrap.css', // will use the cached version if you already loaded bootstrap with the button
 					'bower_components/ocModal/dist/css/ocModal.animations.css',
 					'bower_components/ocModal/dist/css/ocModal.light.css',

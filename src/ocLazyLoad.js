@@ -90,11 +90,16 @@
 						if(angular.isUndefined(filesCache.get(path))) {
 							filesCache.put(path, true);
 						}
-						broadcast('ocLazyLoad.fileLoaded', path);
-						deferred.resolve();
+						$rootScope.$apply(function() {
+							broadcast('ocLazyLoad.fileLoaded', path);
+							deferred.resolve();
+						});
 					}
 					el.onerror = function(e) {
-						deferred.reject(new Error('Unable to load '+path));
+						console.log('on error');
+						$rootScope.$apply(function() {
+							deferred.reject(new Error('Unable to load '+path));
+						});
 					}
 					el.async = 1;
 					anchor.insertBefore(el, anchor.lastChild);
@@ -112,13 +117,16 @@
 					 * because the user can overwrite jsLoader and it will probably not use promises :(
 					 */
 					jsLoader = function(paths, callback, params) {
+						console.log('js loader', paths);
 						var promises = [];
 						angular.forEach(paths, function loading(path) {
 							promises.push(buildElement('js', path, params));
 						});
 						$q.all(promises).then(function success() {
+							console.log('callback success jsloader');
 							callback();
 						}, function error(err) {
+							console.log('callback error jsloader');
 							callback(err);
 						});
 					}
@@ -196,6 +204,7 @@
 						jsFiles = [],
 						promises = [];
 
+					// todo check with params undefined
 					angular.extend(params || {}, config);
 
 					angular.forEach(params.files, function(path) {
@@ -239,7 +248,9 @@
 					if(jsFiles.length > 0) {
 						var jsDeferred = $q.defer();
 						jsLoader(jsFiles, function(err) {
+							console.log(err);
 							if(angular.isDefined(err) && jsLoader.hasOwnProperty('ocLazyLoadLoader')) {
+								console.log('in error');
 								$log.error(err);
 								jsDeferred.reject(err);
 							} else {
@@ -261,8 +272,12 @@
 					},
 
 					setModuleConfig: function(module) {
-						modules[module.name] = module;
-						return module;
+						if(typeof module === 'object') {
+							modules[module.name] = module;
+							return module;
+						} else {
+							throw new Error('$ocLazyLoad: The module config has to be an object');
+						}
 					},
 
 					getModules: function() {
@@ -471,21 +486,21 @@
 				if(angular.isDefined(config.jsLoader) || angular.isDefined(config.asyncLoader)) {
 					jsLoader = config.jsLoader || config.asyncLoader;
 					if(!angular.isFunction(jsLoader)) {
-						throw('The js loader needs to be a function');
+						throw new Error('$ocLazyLoad: The js loader needs to be a function');
 					}
 				}
 
 				if(angular.isDefined(config.cssLoader)) {
 					cssLoader = config.cssLoader;
 					if(!angular.isFunction(cssLoader)) {
-						throw('The css loader needs to be a function');
+						throw new Error('$ocLazyLoad: The css loader needs to be a function');
 					}
 				}
 
 				if(angular.isDefined(config.templatesLoader)) {
 					templatesLoader = config.templatesLoader;
 					if(!angular.isFunction(templatesLoader)) {
-						throw('The template loader needs to be a function');
+						throw new Error('$ocLazyLoad: The template loader needs to be a function');
 					}
 				}
 
@@ -623,7 +638,7 @@
 		} catch(e) {
 			// this error message really suxx
 			if(/No module/.test(e) || (e .message.indexOf('$injector:nomod') > -1)) {
-				e.message = 'The module "'+moduleName+'" that you are trying to load does not exist. ' + e.message
+				e.message = '$ocLazyLoad: The module "'+moduleName+'" that you are trying to load does not exist. ' + e.message
 			}
 			throw e;
 		}
@@ -641,7 +656,7 @@
 				if(providers.hasOwnProperty(args[0])) {
 					provider = providers[args[0]];
 				} else {
-					throw new Error('unsupported provider ' + args[0]);
+					throw new Error('$ocLazyLoad: unsupported provider ' + args[0]);
 				}
 				var invoked = regConfigs.indexOf(moduleName);
 				if(registerInvokeList(args[2][0]) && (args[1] !== 'invoke' || (args[1] === 'invoke' && (!invoked || reconfig)))) {

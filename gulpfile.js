@@ -1,5 +1,39 @@
 var gulp = require('gulp');
 
+gulp.task('karma', function() {
+	var karma = require('gulp-karma');
+	var testFiles = [
+		'bower_components/angular/angular.js',
+		'bower_components/angular-mocks/angular-mocks.js',
+		'src/ocLazyLoad.js',
+		'test/unit/**/*.spec.js'
+	];
+	return gulp.src(testFiles)
+		.pipe(karma({
+			configFile: 'test/karma.conf.js',
+			action: 'run'
+		}))
+		.on('error', function(err) {
+			// Make sure failed tests cause gulp to exit non-zero
+			throw err;
+		});
+});
+
+gulp.task('karma-dev', function() {
+	var karma = require('gulp-karma');
+	var testFiles = [
+		'bower_components/angular/angular.js',
+		'bower_components/angular-mocks/angular-mocks.js',
+		'src/ocLazyLoad.js',
+		'test/unit/**/*.spec.js'
+	];
+	return gulp.src(testFiles)
+		.pipe(karma({
+			configFile: 'test/karma.conf.js',
+			action: 'watch'
+		}));
+});
+
 var build = function(newVer) {
 	var rename = require('gulp-rename'),
 		uglify = require('gulp-uglify'),

@@ -10,14 +10,22 @@
     "example": "examples"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "karma start ./test/karma.conf.js",
+    "test-dev": "karma start ./test/karma.conf.js --single-run=false",
     "build": "gulp build"
   },
   "repository": {
     "type": "git",
     "url": "git://github.com/ocombe/ocLazyLoad.git"
   },
-  "keywords": ["lazy load", "lazy-load", "load on demand", "module", "angular", "angularJS"],
+  "keywords": [
+    "lazy load",
+    "lazy-load",
+    "load on demand",
+    "module",
+    "angular",
+    "angularJS"
+  ],
   "bugs": {
     "url": "https://github.com/ocombe/ocLazyLoad/issues"
   },
@@ -28,9 +36,17 @@
     "gulp-exec": "^2.0.1",
     "gulp-header": "^1.0.5",
     "gulp-json-editor": "^2.0.2",
+    "gulp-karma": "0.0.4",
     "gulp-prompt": "^0.1.1",
     "gulp-rename": "^1.2.0",
     "gulp-uglify": "^0.3.1",
+    "jasmine-as-promised": "0.0.8",
+    "karma": "^0.12.19",
+    "karma-chrome-launcher": "^0.1.4",
+    "karma-cli": "0.0.4",
+    "karma-jasmine": "^0.1.5",
+    "karma-junit-reporter": "^0.2.2",
+    "karma-phantomjs-launcher": "^0.1.4",
     "qq": "^0.3.5",
     "semver": "^2.3.1",
     "streamqueue": "^0.1.1"
