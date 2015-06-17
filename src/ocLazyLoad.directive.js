@@ -18,7 +18,7 @@
                     }, moduleName => {
                         if(angular.isDefined(moduleName)) {
                             $ocLazyLoad.load(moduleName).then(() => {
-                                $animate.enter(content, $element);
+                                $animate.enter(angular.element(content), $element);
                                 let contents = element.contents();
                                 angular.forEach(contents, content => {
                                     if(content.nodeType !== 3) { // 3 is a text node
